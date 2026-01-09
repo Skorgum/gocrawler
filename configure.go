@@ -25,7 +25,7 @@ func (cfg *config) setPageData(normalizedURL string, data PageData) {
 	cfg.pages[normalizedURL] = data
 }
 
-func configure(rawBaseURL string, maxConcurrency int) (*config, error) {
+func configure(rawBaseURL string, maxConcurrency int, maxPages int) (*config, error) {
 	baseURL, err := url.Parse(rawBaseURL)
 	if err != nil {
 		return nil, fmt.Errorf("couldn't parse base URL %q: %v", rawBaseURL, err)
@@ -37,5 +37,6 @@ func configure(rawBaseURL string, maxConcurrency int) (*config, error) {
 		mu:                 &sync.Mutex{},
 		concurrencyControl: make(chan struct{}, maxConcurrency),
 		wg:                 &sync.WaitGroup{},
+		maxPages:           maxPages,
 	}, nil
 }

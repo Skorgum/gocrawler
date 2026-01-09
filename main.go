@@ -3,23 +3,34 @@ package main
 import (
 	"fmt"
 	"os"
+	"strconv"
 )
 
 func main() {
-	if len(os.Args) < 2 {
-		fmt.Println("no website provided")
+	if len(os.Args) < 4 {
+		fmt.Println("not enough arguments provided.")
+		fmt.Println("usage: gocrawler <url> <max_concurrency> <max_pages>")
 		os.Exit(1)
 	}
 
-	if len(os.Args) > 2 {
+	if len(os.Args) > 4 {
 		fmt.Println("too many arguments provided.")
 		os.Exit(1)
 	}
 
 	rawBaseURL := os.Args[1]
 
-	const maxConcurrency = 3
-	cfg, err := configure(rawBaseURL, maxConcurrency)
+	maxConcurrency, err := strconv.Atoi(os.Args[2])
+	if err != nil {
+		fmt.Printf("error parsing concurrency: %v\n", err)
+		return
+	}
+	maxPages, err := strconv.Atoi(os.Args[3])
+	if err != nil {
+		fmt.Printf("error parsing max pages: %v\n", err)
+		return
+	}
+	cfg, err := configure(rawBaseURL, maxConcurrency, maxPages)
 	if err != nil {
 		fmt.Printf("error in configuration: %v\n", err)
 		return
